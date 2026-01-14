@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unova - Messages</title>
+    <link rel="stylesheet" href="styl.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="nav-left">
+                <h1 class="logo">Unova</h1>
+            </div>
+
+            <!-- Navigation centrale -->
+            <div class="nav-center">
+                <a href="homme.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="story.html" class="nav-link">
+                    <i class="fas fa-video"></i>
+                </a>
+                <a href="message.html" class="nav-link active">
+                    <i class="fas fa-comments"></i>
+                    <span class="badge" id="messageBadge">0</span>
+                </a>
+                <a href="notification.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notificationBadge">0</span>
+                </a>
+            </div>
+
+            <!-- Navigation droite -->
+            <div class="nav-right">
+                <div class="user-menu" onclick="toggleUserDropdown()">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" class="user-avatar" id="navUserAvatar">
+                    <i class="fas fa-caret-down"></i>
+                </div>
+                
+                <!-- Dropdown menu -->
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" onclick="showProfile(); return false;">
+                        <i class="fas fa-user"></i> Mon profil
+                    </a>
+                    <a href="homme.html">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                    <hr>
+                    <a href="#" onclick="handleLogout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal - Messagerie -->
+    <div class="messages-page">
+        <!-- Sidebar - Liste des conversations -->
+        <aside class="conversations-sidebar">
+            <div class="conversations-header">
+                <h2>Messages</h2>
+                <button class="btn-icon" onclick="openNewMessageModal()">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+
+            <!-- Barre de recherche -->
+            <div class="search-conversations">
+                <i class="fas fa-search"></i>
+                <input 
+                    type="text" 
+                    placeholder="Rechercher dans les messages..." 
+                    id="searchConversations"
+                    onkeyup="searchConversations()"
+                >
+            </div>
+
+            <!-- Liste des conversations -->
+            <div class="conversations-list" id="conversationsList">
+                <!-- Les conversations seront chargées ici dynamiquement -->
+            </div>
+
+            <!-- Message si aucune conversation -->
+            <div id="noConversations" class="no-data" style="display: none;">
+                <i class="fas fa-comments"></i>
+                <p>Aucune conversation</p>
+                <button class="btn btn-primary" onclick="openNewMessageModal()">
+                    Nouveau message
+                </button>
+            </div>
+        </aside>
+
+        <!-- Zone de chat -->
+        <div class="chat-area" id="chatArea">
+            <!-- En-tête du chat -->
+            <div class="chat-header" id="chatHeader" style="display: none;">
+                <div class="chat-user-info">
+                    <img src="" alt="Avatar" id="chatUserAvatar">
+                    <div>
+                        <h3 id="chatUserName">Nom de l'utilisateur</h3>
+                        <p class="user-status" id="chatUserStatus">En ligne</p>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="btn-icon" onclick="startVideoCall()">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="btn-icon" onclick="startVoiceCall()">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="btn-icon" onclick="toggleChatInfo()">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Les messages seront chargés ici dynamiquement -->
+            </div>
+
+            <!-- Zone de saisie -->
+            <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                <button class="btn-icon" onclick="openEmojiPicker()">
+                    <i class="fas fa-smile"></i>
+                </button>
+                <button class="btn-icon" onclick="document.getElementById('messageImageInput').click()">
+                    <i class="fas fa-image"></i>
+                </button>
+                <input type="file" id="messageImageInput" accept="image/*" style="display: none;" onchange="handleMessageImageSelect(event)">
+                
+                <input 
+                    type="text" 
+                    placeholder="Écrivez un message..." 
+                    id="messageInput"
+                    onkeypress="handleMessageKeyPress(event)"
+                >
+                
+                <button class="btn-icon btn-send" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <!-- Message par défaut -->
+            <div class="no-chat-selected" id="noChatSelected">
+                <i class="fas fa-comments"></i>
+                <h2>Vos Messages</h2>
+                <p>Envoyez des messages privés à vos amis</p>
+                <button class="btn btn-primary" onclick="openNewMessageModal()">
+                    <i class="fas fa-edit"></i> Nouveau message
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel d'informations (optionnel) -->
+        <aside class="chat-info-panel" id="chatInfoPanel" style="display: none;">
+            <div class="info-panel-header">
+                <h3>Informations</h3>
+                <button class="btn-icon" onclick="toggleChatInfo()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="info-panel-content">
+                <div class="info-user-profile">
+                    <img src="" alt="Avatar" id="infoPanelAvatar">
+                    <h3 id="infoPanelName">Nom</h3>
+                    <p id="infoPanelEmail">email@example.com</p>
+                </div>
+                <div class="info-actions">
+                    <button onclick="viewProfile()">
+                        <i class="fas fa-user"></i>
+                        Voir le profil
+                    </button>
+                    <button onclick="muteConversation()">
+                        <i class="fas fa-bell-slash"></i>
+                        Désactiver les notifications
+                    </button>
+                    <button class="danger" onclick="deleteConversation()">
+                        <i class="fas fa-trash"></i>
+                        Supprimer la conversation
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal - Nouveau message -->
+    <div class="modal" id="newMessageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouveau message</h2>
+                <button class="close-modal" onclick="closeNewMessageModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>À :</label>
+                    <input 
+                        type="text" 
+                        placeholder="Rechercher un ami..." 
+                        id="searchFriends"
+                        onkeyup="searchFriendsForMessage()"
+                    >
+                </div>
+                <div class="friends-list" id="friendsListForMessage">
+                    <!-- Liste des amis sera chargée ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts.js"></script>
+    <script>
+        // Variables globales pour la messagerie
+        let currentConversation = null;
+        let conversations = [];
+        let messageRefreshInterval = null;
+
+        // Initialisation de la page de messagerie
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier l'authentification
+            checkAuth();
+            
+            // Charger les conversations
+            loadConversations();
+            updateNotificationBadges();
+            
+            // Rafraîchir les messages régulièrement
+            messageRefreshInterval = setInterval(() => {
+                if (currentConversation) {
+                    loadMessages(currentConversation.userId);
+                }
+                loadConversations();
+            }, 5000); // Toutes les 5 secondes
+        });
+
+        // Nettoyer l'intervalle lors de la fermeture
+        window.addEventListener('beforeunload', function() {
+            if (messageRefreshInterval) {
+                clearInterval(messageRefreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>

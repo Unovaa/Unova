@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unova - Accueil</title>
+    <link rel="stylesheet" href="styl.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="nav-left">
+                <h1 class="logo">Unova</h1>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher sur Unova..." id="searchInput">
+                </div>
+            </div>
+
+            <!-- Navigation centrale -->
+            <div class="nav-center">
+                <a href="homme.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="story.html" class="nav-link">
+                    <i class="fas fa-video"></i>
+                </a>
+                <a href="message.html" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span class="badge" id="messageBadge">0</span>
+                </a>
+                <a href="notification.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notificationBadge">0</span>
+                </a>
+            </div>
+
+            <!-- Navigation droite -->
+            <div class="nav-right">
+                <div class="user-menu" onclick="toggleUserDropdown()">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" class="user-avatar" id="navUserAvatar">
+                    <span id="navUserName">Utilisateur</span>
+                    <i class="fas fa-caret-down"></i>
+                </div>
+                
+                <!-- Dropdown menu -->
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" onclick="showProfile(); return false;">
+                        <i class="fas fa-user"></i> Mon profil
+                    </a>
+                    <a href="#" onclick="showSettings(); return false;">
+                        <i class="fas fa-cog"></i> Paramètres
+                    </a>
+                    <hr>
+                    <a href="#" onclick="handleLogout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+        <!-- Sidebar gauche -->
+        <aside class="sidebar left-sidebar">
+            <div class="sidebar-content">
+                <!-- Profil utilisateur -->
+                <div class="profile-card">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" id="sidebarUserAvatar">
+                    <h3 id="sidebarUserName">Utilisateur</h3>
+                    <p id="sidebarUserEmail">user@example.com</p>
+                </div>
+
+                <!-- Menu de navigation -->
+                <div class="sidebar-menu">
+                    <a href="#" class="menu-item active">
+                        <i class="fas fa-home"></i>
+                        <span>Fil d'actualité</span>
+                    </a>
+                    <a href="#" onclick="showFriends(); return false;" class="menu-item">
+                        <i class="fas fa-user-friends"></i>
+                        <span>Amis</span>
+                        <span class="count" id="friendsCount">0</span>
+                    </a>
+                    <a href="#" onclick="showGroups(); return false;" class="menu-item">
+                        <i class="fas fa-users"></i>
+                        <span>Groupes</span>
+                    </a>
+                    <a href="#" onclick="showPhotos(); return false;" class="menu-item">
+                        <i class="fas fa-images"></i>
+                        <span>Photos</span>
+                    </a>
+                    <a href="#" onclick="showVideos(); return false;" class="menu-item">
+                        <i class="fas fa-video"></i>
+                        <span>Vidéos</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Zone centrale - Fil d'actualité -->
+        <main class="feed-container">
+            <!-- Stories en haut -->
+            <div class="stories-container">
+                <div class="story-card create-story" onclick="window.location.href='story.html'">
+                    <i class="fas fa-plus"></i>
+                    <p>Créer une story</p>
+                </div>
+                <div id="storiesList"></div>
+            </div>
+
+            <!-- Créer une publication -->
+            <div class="create-post-card">
+                <div class="create-post-header">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" id="createPostAvatar">
+                    <input 
+                        type="text" 
+                        placeholder="Quoi de neuf, utilisateur ?" 
+                        readonly 
+                        onclick="openCreatePostModal()"
+                        id="createPostInput"
+                    >
+                </div>
+                <div class="create-post-actions">
+                    <button onclick="openCreatePostModal('photo')">
+                        <i class="fas fa-image"></i> Photo
+                    </button>
+                    <button onclick="openCreatePostModal('video')">
+                        <i class="fas fa-video"></i> Vidéo
+                    </button>
+                    <button onclick="openCreatePostModal('feeling')">
+                        <i class="fas fa-smile"></i> Humeur
+                    </button>
+                </div>
+            </div>
+
+            <!-- Liste des publications -->
+            <div id="postsList"></div>
+
+            <!-- Message si aucune publication -->
+            <div id="noPostsMessage" class="no-posts" style="display: none;">
+                <i class="fas fa-newspaper"></i>
+                <p>Aucune publication pour le moment</p>
+                <p class="subtitle">Soyez le premier à partager quelque chose !</p>
+            </div>
+        </main>
+
+        <!-- Sidebar droite -->
+        <aside class="sidebar right-sidebar">
+            <div class="sidebar-content">
+                <!-- Demandes d'amis -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>Demandes d'amis</h3>
+                        <a href="#" onclick="showAllFriendRequests(); return false;">Voir tout</a>
+                    </div>
+                    <div id="friendRequestsList" class="friend-requests-list">
+                        <p class="no-data">Aucune demande d'amis</p>
+                    </div>
+                </div>
+
+                <!-- Contacts en ligne -->
+                <div class="widget">
+                    <div class="widget-header">
+                        <h3>Contacts</h3>
+                        <div class="widget-actions">
+                            <button onclick="searchContacts()"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div id="onlineContactsList" class="contacts-list"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal de création de publication -->
+    <div class="modal" id="createPostModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Créer une publication</h2>
+                <button class="close-modal" onclick="closeCreatePostModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="post-author">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" id="modalUserAvatar">
+                    <div>
+                        <h4 id="modalUserName">Utilisateur</h4>
+                        <select id="postVisibility">
+                            <option value="public">🌍 Public</option>
+                            <option value="friends">👥 Amis</option>
+                            <option value="private">🔒 Privé</option>
+                        </select>
+                    </div>
+                </div>
+                <textarea 
+                    id="postContent" 
+                    placeholder="Quoi de neuf ?"
+                    rows="5"
+                ></textarea>
+                <div class="post-image-preview" id="postImagePreview" style="display: none;">
+                    <img id="previewImg" src="" alt="Preview">
+                    <button class="remove-image" onclick="removePostImage()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="post-options">
+                    <button onclick="document.getElementById('postImageInput').click()">
+                        <i class="fas fa-image"></i> Ajouter une photo
+                    </button>
+                    <input type="file" id="postImageInput" accept="image/*" style="display: none;" onchange="handlePostImageSelect(event)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreatePostModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="submitPost()">Publier</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts.js"></script>
+    <script>
+        // Initialisation de la page d'accueil
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier l'authentification
+            checkAuth();
+            
+            // Charger les données
+            loadUserInfo();
+            loadPosts();
+            loadStories();
+            loadFriendRequests();
+            loadOnlineContacts();
+            updateNotificationBadges();
+            
+            // Rafraîchir les badges régulièrement
+            setInterval(updateNotificationBadges, 30000); // Toutes les 30 secondes
+        });
+    </script>
+</body>
+</html>

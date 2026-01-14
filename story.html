@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unova - Stories</title>
+    <link rel="stylesheet" href="styl.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="nav-left">
+                <h1 class="logo">Unova</h1>
+            </div>
+
+            <!-- Navigation centrale -->
+            <div class="nav-center">
+                <a href="homme.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="story.html" class="nav-link active">
+                    <i class="fas fa-video"></i>
+                </a>
+                <a href="message.html" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span class="badge" id="messageBadge">0</span>
+                </a>
+                <a href="notification.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notificationBadge">0</span>
+                </a>
+            </div>
+
+            <!-- Navigation droite -->
+            <div class="nav-right">
+                <button class="btn btn-primary" onclick="openCreateStoryModal()">
+                    <i class="fas fa-plus"></i> Créer une story
+                </button>
+                <div class="user-menu" onclick="toggleUserDropdown()">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" class="user-avatar" id="navUserAvatar">
+                    <i class="fas fa-caret-down"></i>
+                </div>
+                
+                <!-- Dropdown menu -->
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" onclick="showProfile(); return false;">
+                        <i class="fas fa-user"></i> Mon profil
+                    </a>
+                    <a href="homme.html">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                    <hr>
+                    <a href="#" onclick="handleLogout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal des stories -->
+    <div class="stories-page">
+        <!-- Sidebar avec la liste des stories -->
+        <aside class="stories-sidebar">
+            <div class="stories-header">
+                <h2>Stories</h2>
+            </div>
+            
+            <!-- Ma story -->
+            <div class="stories-section">
+                <h3>Votre story</h3>
+                <div id="myStoryCard" class="story-item create-story-item" onclick="openCreateStoryModal()">
+                    <div class="story-item-avatar">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="story-item-info">
+                        <h4>Créer une story</h4>
+                        <p>Partagez une photo ou écrivez quelque chose</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stories des amis -->
+            <div class="stories-section">
+                <h3>Toutes les stories</h3>
+                <div id="friendsStoriesList"></div>
+            </div>
+        </aside>
+
+        <!-- Visionneuse de story -->
+        <div class="story-viewer" id="storyViewer">
+            <div class="story-viewer-header">
+                <div class="story-author">
+                    <img src="" alt="Avatar" id="storyAuthorAvatar">
+                    <div>
+                        <h4 id="storyAuthorName">Nom</h4>
+                        <p id="storyTime">Il y a quelques instants</p>
+                    </div>
+                </div>
+                <button class="close-story" onclick="closeStoryViewer()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="story-viewer-content" id="storyContent">
+                <!-- Contenu de la story (image ou texte) -->
+            </div>
+
+            <div class="story-viewer-progress">
+                <div class="progress-bar" id="storyProgress"></div>
+            </div>
+
+            <div class="story-viewer-navigation">
+                <button class="nav-btn prev" onclick="previousStory()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-btn next" onclick="nextStory()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="story-viewer-actions">
+                <div class="story-action-input">
+                    <input 
+                        type="text" 
+                        placeholder="Répondre à la story..." 
+                        id="storyReplyInput"
+                    >
+                    <button onclick="sendStoryReply()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Message par défaut -->
+            <div class="no-story-selected" id="noStorySelected">
+                <i class="fas fa-video"></i>
+                <h2>Bienvenue dans les Stories</h2>
+                <p>Sélectionnez une story pour commencer à regarder</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de création de story -->
+    <div class="modal" id="createStoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Créer une story</h2>
+                <button class="close-modal" onclick="closeCreateStoryModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Options de création -->
+                <div class="story-create-options">
+                    <button class="story-option" onclick="selectStoryType('text')">
+                        <i class="fas fa-font"></i>
+                        <span>Story texte</span>
+                    </button>
+                    <button class="story-option" onclick="selectStoryType('image')">
+                        <i class="fas fa-image"></i>
+                        <span>Story photo</span>
+                    </button>
+                </div>
+
+                <!-- Zone de création - Texte -->
+                <div id="textStoryCreator" class="story-creator" style="display: none;">
+                    <div class="text-story-preview">
+                        <textarea 
+                            id="storyTextContent" 
+                            placeholder="Écrivez quelque chose..."
+                            maxlength="200"
+                        ></textarea>
+                        <div class="char-count">
+                            <span id="charCount">0</span>/200
+                        </div>
+                    </div>
+                    <div class="background-selector">
+                        <p>Choisir un fond :</p>
+                        <div class="bg-options">
+                            <button class="bg-option" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="selectBackground('gradient1')"></button>
+                            <button class="bg-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="selectBackground('gradient2')"></button>
+                            <button class="bg-option" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="selectBackground('gradient3')"></button>
+                            <button class="bg-option" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);" onclick="selectBackground('gradient4')"></button>
+                            <button class="bg-option" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);" onclick="selectBackground('gradient5')"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone de création - Image -->
+                <div id="imageStoryCreator" class="story-creator" style="display: none;">
+                    <div class="image-story-upload">
+                        <input type="file" id="storyImageInput" accept="image/*" style="display: none;" onchange="handleStoryImageSelect(event)">
+                        <div class="upload-area" onclick="document.getElementById('storyImageInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Cliquez pour télécharger une image</p>
+                        </div>
+                        <div class="story-image-preview" id="storyImagePreview" style="display: none;">
+                            <img id="storyPreviewImg" src="" alt="Preview">
+                            <button class="remove-image" onclick="removeStoryImage()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreateStoryModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="submitStory()" id="submitStoryBtn" disabled>Partager la story</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts.js"></script>
+    <script>
+        // Variables globales pour la story
+        let currentStoryIndex = 0;
+        let currentUserStories = [];
+        let allStories = [];
+        let storyTimer = null;
+        let storyProgressInterval = null;
+
+        // Initialisation de la page des stories
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier l'authentification
+            checkAuth();
+            
+            // Charger les données
+            loadAllStories();
+            updateNotificationBadges();
+            
+            // Compteur de caractères pour story texte
+            const storyTextContent = document.getElementById('storyTextContent');
+            if (storyTextContent) {
+                storyTextContent.addEventListener('input', function() {
+                    document.getElementById('charCount').textContent = this.value.length;
+                    document.getElementById('submitStoryBtn').disabled = this.value.trim().length === 0;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

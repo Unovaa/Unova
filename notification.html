@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unova - Notifications</title>
+    <link rel="stylesheet" href="styl.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="nav-left">
+                <h1 class="logo">Unova</h1>
+            </div>
+
+            <!-- Navigation centrale -->
+            <div class="nav-center">
+                <a href="homme.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="story.html" class="nav-link">
+                    <i class="fas fa-video"></i>
+                </a>
+                <a href="message.html" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span class="badge" id="messageBadge">0</span>
+                </a>
+                <a href="notification.html" class="nav-link active">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notificationBadge">0</span>
+                </a>
+            </div>
+
+            <!-- Navigation droite -->
+            <div class="nav-right">
+                <div class="user-menu" onclick="toggleUserDropdown()">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4267B2&color=fff" alt="Avatar" class="user-avatar" id="navUserAvatar">
+                    <i class="fas fa-caret-down"></i>
+                </div>
+                
+                <!-- Dropdown menu -->
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" onclick="showProfile(); return false;">
+                        <i class="fas fa-user"></i> Mon profil
+                    </a>
+                    <a href="homme.html">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                    <hr>
+                    <a href="#" onclick="handleLogout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal - Notifications -->
+    <div class="notifications-page">
+        <div class="notifications-container">
+            <!-- En-tête -->
+            <div class="notifications-header">
+                <h1>Notifications</h1>
+                <div class="notifications-actions">
+                    <button class="btn-text" onclick="markAllAsRead()">
+                        <i class="fas fa-check-double"></i>
+                        Tout marquer comme lu
+                    </button>
+                    <button class="btn-icon" onclick="toggleNotificationSettings()">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtres -->
+            <div class="notifications-filters">
+                <button class="filter-btn active" onclick="filterNotifications('all')">
+                    Toutes
+                </button>
+                <button class="filter-btn" onclick="filterNotifications('unread')">
+                    Non lues
+                </button>
+                <button class="filter-btn" onclick="filterNotifications('likes')">
+                    <i class="fas fa-heart"></i> J'aime
+                </button>
+                <button class="filter-btn" onclick="filterNotifications('comments')">
+                    <i class="fas fa-comment"></i> Commentaires
+                </button>
+                <button class="filter-btn" onclick="filterNotifications('friends')">
+                    <i class="fas fa-user-plus"></i> Amis
+                </button>
+                <button class="filter-btn" onclick="filterNotifications('messages')">
+                    <i class="fas fa-envelope"></i> Messages
+                </button>
+            </div>
+
+            <!-- Liste des notifications -->
+            <div class="notifications-list" id="notificationsList">
+                <!-- Les notifications seront chargées ici dynamiquement -->
+            </div>
+
+            <!-- Message si aucune notification -->
+            <div id="noNotifications" class="no-data" style="display: none;">
+                <i class="fas fa-bell"></i>
+                <h2>Aucune notification</h2>
+                <p>Vous êtes à jour ! Revenez plus tard.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel des paramètres de notifications -->
+    <div class="notification-settings-panel" id="notificationSettingsPanel" style="display: none;">
+        <div class="settings-panel-content">
+            <div class="settings-header">
+                <h3>Paramètres des notifications</h3>
+                <button class="btn-icon" onclick="toggleNotificationSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Notifications push</h4>
+                        <p>Recevoir des notifications sur votre appareil</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="pushNotifications" checked onchange="togglePushNotifications()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>J'aime</h4>
+                        <p>Quand quelqu'un aime votre publication</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="likesNotifications" checked onchange="toggleLikesNotifications()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Commentaires</h4>
+                        <p>Quand quelqu'un commente votre publication</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="commentsNotifications" checked onchange="toggleCommentsNotifications()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Demandes d'amis</h4>
+                        <p>Quand quelqu'un vous envoie une demande d'ami</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="friendRequestsNotifications" checked onchange="toggleFriendRequestsNotifications()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Messages</h4>
+                        <p>Quand vous recevez un nouveau message</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="messagesNotifications" checked onchange="toggleMessagesNotifications()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts.js"></script>
+    <script>
+        // Variables globales pour les notifications
+        let currentFilter = 'all';
+        let notificationRefreshInterval = null;
+
+        // Initialisation de la page de notifications
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier l'authentification
+            checkAuth();
+            
+            // Charger les notifications
+            loadNotifications();
+            updateNotificationBadges();
+            
+            // Marquer les notifications comme vues
+            markNotificationsAsSeen();
+            
+            // Rafraîchir les notifications régulièrement
+            notificationRefreshInterval = setInterval(() => {
+                loadNotifications();
+                updateNotificationBadges();
+            }, 30000); // Toutes les 30 secondes
+        });
+
+        // Nettoyer l'intervalle lors de la fermeture
+        window.addEventListener('beforeunload', function() {
+            if (notificationRefreshInterval) {
+                clearInterval(notificationRefreshInterval);
+            }
+        });
+
+        // Fonction pour basculer le panneau des paramètres
+        function toggleNotificationSettings() {
+            const panel = document.getElementById('notificationSettingsPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Fonctions pour gérer les paramètres de notifications
+        function togglePushNotifications() {
+            const enabled = document.getElementById('pushNotifications').checked;
+            saveNotificationSetting('push', enabled);
+            showToast(enabled ? 'Notifications push activées' : 'Notifications push désactivées');
+        }
+
+        function toggleLikesNotifications() {
+            const enabled = document.getElementById('likesNotifications').checked;
+            saveNotificationSetting('likes', enabled);
+            showToast(enabled ? 'Notifications de J\'aime activées' : 'Notifications de J\'aime désactivées');
+        }
+
+        function toggleCommentsNotifications() {
+            const enabled = document.getElementById('commentsNotifications').checked;
+            saveNotificationSetting('comments', enabled);
+            showToast(enabled ? 'Notifications de commentaires activées' : 'Notifications de commentaires désactivées');
+        }
+
+        function toggleFriendRequestsNotifications() {
+            const enabled = document.getElementById('friendRequestsNotifications').checked;
+            saveNotificationSetting('friendRequests', enabled);
+            showToast(enabled ? 'Notifications de demandes d\'amis activées' : 'Notifications de demandes d\'amis désactivées');
+        }
+
+        function toggleMessagesNotifications() {
+            const enabled = document.getElementById('messagesNotifications').checked;
+            saveNotificationSetting('messages', enabled);
+            showToast(enabled ? 'Notifications de messages activées' : 'Notifications de messages désactivées');
+        }
+    </script>
+</body>
+</html>
